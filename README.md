@@ -10,7 +10,7 @@ We use Torch and DGL as the backend.
 - Torch version:  '1.7.1'
 - DGL version: '0.6.1'
 
-## Codes & Datasets
+## Codes & Datasets (Junyi & ASSIST)
 Coming soon~~~
 
 ## Related Works
