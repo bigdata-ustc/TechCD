@@ -52,7 +52,7 @@ class Net(nn.Module):
 
         self.prednet_full1 = nn.Linear(self.prednet_input_len, self.prednet_len1)
         self.prednet_full2 = nn.Linear(self.prednet_len1, self.prednet_len2)
-        self.prednet_full3 = nn.Linear(self.prednet_len1, 1)
+        self.prednet_full3 = nn.Linear(self.prednet_len2, 1)
 
         # initialization
         for name, param in self.named_parameters():
@@ -61,13 +61,10 @@ class Net(nn.Module):
 
     def forward(self, stu_id, exer_id, kn_emb, input_knowedge_ids, history):
         '''
-        :param stu_id: LongTensor
-        :param exer_id: LongTensor
-        :param kn_emb: FloatTensor, the knowledge relevancy vectors
+        :param:
         :return: FloatTensor, the probabilities of answering correctly
         '''
         # before prednet
-        # print (history)
         entity_emb = self.entity(self.entity_index)
 
         entity_emb_sim = self.similarity_gcn1(entity_emb)
@@ -90,8 +87,6 @@ class Net(nn.Module):
         entity_emb_exe_con = self.exer_concept_gcn4(entity_emb3)
         entity_emb4 = entity_emb_sim + entity_emb_pre + entity_emb_exe_con
 
-        # print ()
-        # print (entity_emb1.shape)
         stu_entity = (entity_emb3 + entity_emb2)/2
         exer_entity = (entity_emb + entity_emb1 + entity_emb2 + entity_emb3)/4
         concept_entity = exer_entity[self.k_index]
@@ -119,8 +114,8 @@ class Net(nn.Module):
 
         # prednet
         input_x = e_discrimination * (proficiency - k_difficulty) * kn_emb
-        output = torch.sigmoid(self.prednet_full1(input_x))
-        output = torch.sigmoid(self.prednet_full2(input_x))
+        input_x = torch.sigmoid(self.prednet_full1(input_x))
+        input_x = torch.sigmoid(self.prednet_full2(input_x))
         output = torch.sigmoid(self.prednet_full3(input_x))
 
         # print (output)
