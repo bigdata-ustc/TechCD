@@ -6,6 +6,9 @@ Authors: [Weibo Gao](https://scholar.google.com/citations?user=k19RS74AAAAJ&hl=z
 
 Email: weibogao@mail.ustc.edu.cn
 
+
+> Tips: The code and documentation will be completed by April.
+
 ## Environment Settings
 Install the Python dependencies:
 ```
@@ -21,8 +24,6 @@ To train TechCD:
 ```
 python train.py
 ```
-
-The code and documentation will be completed by April.
 
 ## Related Works
 **RCD: Relation Map Driven Cognitive Diagnosis for Intelligent Education Systems (SIGIR'2021).** [[Paper](https://dl.acm.org/doi/abs/10.1145/3404835.3462932)][[Code](https://github.com/bigdata-ustc/RCD/)][[Presentation Video](https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3404835.3462932&file=RCD.mp4)]
