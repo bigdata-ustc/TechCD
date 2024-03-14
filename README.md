@@ -28,5 +28,9 @@ Please cite this paper if you use our codes. Thanks!
 }
 ```
 
-### Last Update Date: August 29, 2023
+## Update logs
+
+---
+- March 14, 2024: Add codes and data examples.
+- August 29, 2023: An initial commit.
 
