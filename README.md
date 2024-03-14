@@ -1,20 +1,28 @@
 # TechCD: Leveraging Transferable Knowledge Concept Graph Embedding for Cold-Start Cognitive Diagnosis
-This is our implementation for the paper of **Leveraging Transferable Knowledge Concept Graph Embedding for Cold-Start Cognitive Diagnosis** published on `SIGIR'2023`. [[Paper](https://dl.acm.org/doi/10.1145/3539618.3591774)][[Presentation Video](https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3539618.3591774&file=SIGIR23-fp1870.mp4)]
 
-Author: [Weibo Gao](https://scholar.google.com/citations?user=k19RS74AAAAJ&hl=zh-CN), [Hao Wang](http://staff.ustc.edu.cn/~wanghao3), [Qi Liu](http://staff.ustc.edu.cn/~qiliuql) et al.
+This repository contains the implementation for the paper titled **Leveraging Transferable Knowledge Concept Graph Embedding for Cold-Start Cognitive Diagnosis**, which was published at `SIGIR'2023`. [[Paper](https://dl.acm.org/doi/10.1145/3539618.3591774)][[Presentation Video](https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3539618.3591774&file=SIGIR23-fp1870.mp4)]
+
+Authors: [Weibo Gao](https://scholar.google.com/citations?user=k19RS74AAAAJ&hl=zh-CN), [Hao Wang](http://staff.ustc.edu.cn/~wanghao3), [Qi Liu](http://staff.ustc.edu.cn/~qiliuql) et al.
 
 Email: weibogao@mail.ustc.edu.cn
 
 ## Environment Settings
-We use Torch and DGL as the backend. 
-- Torch version:  '1.7.1'
-- DGL version: '0.6.1'
+Install the Python dependencies:
+```
+pip install -r requirements.txt
+```
+
+Install the CUDA version of DGL:
+- Download the DGL-Cuda package from [here](https://data.dgl.ai/wheels/cu118/repo.html).
+- Install the DGL-Cuda package (e.g., dgl-1.1.2+cu118-cp311-cp311-win_amd64.whl) using `pip install dgl-1.1.2+cu118-cp311-cp311-win_amd64.whl`.
 
 ## Codes & Datasets (Junyi & ASSIST)
-Conducting a training of TechCD:
+To train TechCD:
 ```
 python train.py
 ```
+
+The code and documentation will be completed by April.
 
 ## Related Works
 **RCD: Relation Map Driven Cognitive Diagnosis for Intelligent Education Systems (SIGIR'2021).** [[Paper](https://dl.acm.org/doi/abs/10.1145/3404835.3462932)][[Code](https://github.com/bigdata-ustc/RCD/)][[Presentation Video](https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3404835.3462932&file=RCD.mp4)]
@@ -23,7 +31,7 @@ python train.py
 Please cite this paper if you use our codes. Thanks!
 ```
 @inproceedings{gao2023leveraging,
-  title={Leveraging Transferable Knowledge Concept Graph Embedding for Cold-Start Cognitive Diagnosis},
+  title={Leveraging transferable knowledge concept graph embedding for cold-start cognitive diagnosis},
   author={Gao, Weibo and Wang, Hao and Liu, Qi and Wang, Fei and Lin, Xin and Yue, Linan and Zhang, Zheng and Lv, Rui and Wang, Shijin},
   booktitle={Proceedings of the 46th International ACM SIGIR Conference on Research and Development in Information Retrieval},
   pages={983--992},
@@ -31,9 +39,9 @@ Please cite this paper if you use our codes. Thanks!
 }
 ```
 
-## Update logs
+## Update Logs
 
 ---
-- March 14, 2024: Add codes and data examples.
-- August 29, 2023: Create this project.
+- March 14, 2024: Added codes and data examples.
+- August 29, 2023: Created this project.
 
