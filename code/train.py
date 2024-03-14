@@ -13,7 +13,6 @@ from build_graph import build_graph
 device = torch.device(('cuda:0') if torch.cuda.is_available() else 'cpu')
 
 data = 'CrossSchool' # dataset includes ASSIST, Junyi, CrossSchool
-print(device)
 
 with open('../data/' + data + '/config.txt') as i_f:
     i_f.readline()
