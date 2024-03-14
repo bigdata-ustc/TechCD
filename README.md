@@ -27,10 +27,6 @@ python train.py
 
 ## Related Works
 - **RCD: Relation Map Driven Cognitive Diagnosis for Intelligent Education Systems (SIGIR'2021).** [[Paper](https://dl.acm.org/doi/abs/10.1145/3404835.3462932)][[Code](https://github.com/bigdata-ustc/RCD/)][[Presentation Video](https://dl.acm.org/action/downloadSupplement?doi=10.1145%2F3404835.3462932&file=RCD.mp4)]
-<<<<<<< HEAD
-=======
-
->>>>>>> 214ff60856cd9448414abf86abe31318d027ef21
 - **Zero-1-to-3: Domain-level Zero-shot Cognitive Diagnosis via One Batch of Early-bird Students towards Three Diagnostic Objectives (AAAI'2024).** [[Paper](https://arxiv.org/abs/2312.13434)][[Code](https://github.com/bigdata-ustc/Zero-1-to-3)]
 
 
@@ -49,6 +45,6 @@ Please cite this paper if you use our codes. Thanks!
 ## Update Logs
 
 ---
-- March 14, 2024: Added codes and data examples.
-- August 29, 2023: Created this project.
+- March 14, 2024: Added codes and data examples
+- August 29, 2023: Created this project
 
