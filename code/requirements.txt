@@ -1,3 +1,4 @@
 torch
-dgl
 pandas
+
+# dgl https://data.dgl.ai/wheels/cu118/repo.html

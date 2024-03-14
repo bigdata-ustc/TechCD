@@ -6,18 +6,18 @@ class TrainDataLoader(object):
     '''
     data loader for training
     '''
-    def __init__(self, traget_domain=''):
+    def __init__(self, data=''):
         self.batch_size = 256
         self.ptr = 0
         self.data = []
 
-        with open('../data/new_data/' + traget_domain + '/config.txt') as i_f:
+        with open('../data/' + data + '/config.txt') as i_f:
             i_f.readline()
             self.student_n, self.exer_n, self.knowledge_n = list(map(eval, i_f.readline().split(',')))
             self.knowledge_dim = int(self.knowledge_n)
-        with open('../data/new_data/' + traget_domain + '/train.json', encoding='utf8') as i_f:
+        with open('../data/' + data + '/train.json', encoding='utf8') as i_f:
             self.data = json.load(i_f)
-        with open('../data/new_data/' + traget_domain + '/history.json', encoding='utf8') as i_f:
+        with open('../data/' + data + '/history.json', encoding='utf8') as i_f:
             self.history_data = json.load(i_f)
 
     def next_batch(self):
@@ -55,16 +55,16 @@ class TrainDataLoader(object):
 
 
 class ValTestDataLoader(object):
-    def __init__(self, d_type='validation', traget_domain=''):
+    def __init__(self, d_type='validation', data=''):
         self.batch_size = 256
         self.ptr = 0
         self.data = []
         self.d_type = d_type
 
-        with open('../data/new_data/' + traget_domain + '/history.json', encoding='utf8') as i_f:
+        with open('../data/' + data + '/history.json', encoding='utf8') as i_f:
             self.history_data = json.load(i_f)
-        data_file = '../data/new_data/' + traget_domain + '/test.json'
-        config_file = '../data/new_data/' + traget_domain + '/config.txt'
+        data_file = '../data/' + data + '/test.json'
+        config_file = '../data/' + data + '/config.txt'
         with open(data_file, encoding='utf8') as i_f:
             self.data = json.load(i_f)
         with open(config_file) as i_f:
@@ -106,16 +106,16 @@ class ValTestDataLoader(object):
         self.ptr = 0
 
 class TestDataLoader(object):
-    def __init__(self, d_type='test', traget_domain=''):
+    def __init__(self, d_type='test', data=''):
         self.batch_size = 256
         self.ptr = 0
         self.data = []
         self.d_type = d_type
 
-        with open('../data/new_data/' + traget_domain + '/history.json', encoding='utf8') as i_f:
+        with open('../data/' + data + '/history.json', encoding='utf8') as i_f:
             self.history_data = json.load(i_f)
-        data_file = '../data/new_data/' + traget_domain + '/test.json'
-        config_file = '../data/new_data/' + traget_domain + '/config.txt'
+        data_file = '../data/' + data + '/test.json'
+        config_file = '../data/' + data + '/config.txt'
         with open(data_file, encoding='utf8') as i_f:
             self.data = json.load(i_f)
         with open(config_file) as i_f:

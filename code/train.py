@@ -13,16 +13,16 @@ from build_graph import build_graph
 device = torch.device(('cuda:0') if torch.cuda.is_available() else 'cpu')
 
 data = 'CrossSchool' # dataset includes ASSIST, Junyi, CrossSchool
-
+print(device)
 
 with open('../data/' + data + '/config.txt') as i_f:
     i_f.readline()
     student_n, exer_n, knowledge_n = list(map(eval, i_f.readline().split(',')))
 
 local_map = {
-    'prerequisite_g': build_graph('prerequisite', knowledge_n + exer_n),
-    'similarity_g': build_graph('similarity', knowledge_n + exer_n),
-    'exer_concept_g': build_graph('exer_concept', knowledge_n + exer_n)
+    'prerequisite_g': build_graph('prerequisite', knowledge_n + exer_n, data),
+    'similarity_g': build_graph('similarity', knowledge_n + exer_n, data),
+    'exer_concept_g': build_graph('exer_concept', knowledge_n + exer_n, data)
 }
 epoch_n = 20
 learning_rate = 0.001
