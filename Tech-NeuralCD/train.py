@@ -44,11 +44,9 @@ def train():
             input_stu_ids, input_exer_ids, input_knowledge_embs, input_knowedge_ids, labels = input_stu_ids.to(device), input_exer_ids.to(device), input_knowledge_embs.to(device), input_knowedge_ids.to(device), labels.to(device)
             optimizer.zero_grad()
             output_1 = net.forward(input_stu_ids, input_exer_ids, input_knowledge_embs, input_knowedge_ids, history)
-            # print (output_1.shape)
             output_0 = torch.ones(output_1.size()).to(device) - output_1
             output = torch.cat((output_0, output_1), 1)
 
-            # grad_penalty = 0
             loss = loss_function(torch.log(output+0.0001), labels)
             loss.backward()
             optimizer.step()

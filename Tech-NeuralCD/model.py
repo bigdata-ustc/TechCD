@@ -18,6 +18,8 @@ class Net(nn.Module):
         self.similarity_g = local_map['similarity_g'].to(self.device)
         self.prerequisite_g = local_map['prerequisite_g'].to(self.device)
         self.exer_concept_g = local_map['exer_concept_g'].to(self.device)
+        self.num_layers = 4
+        self.discarding_layers = 2
 
         super(Net, self).__init__()
 
@@ -30,21 +32,9 @@ class Net(nn.Module):
         self.e_index = torch.LongTensor(list(range(self.knowledge_dim, self.knowledge_dim + self.exer_n))).to(self.device)
         self.entity_index = torch.LongTensor(list(range(self.knowledge_dim + self.exer_n))).to(self.device)
 
-        self.similarity_gcn1 = GCN(self.similarity_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.prerequisite_gcn1 = GCN(self.prerequisite_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.exer_concept_gcn1 = GCN(self.exer_concept_g, self.knowledge_dim, self.knowledge_dim, None)
-
-        self.similarity_gcn2 = GCN(self.similarity_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.prerequisite_gcn2 = GCN(self.prerequisite_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.exer_concept_gcn2 = GCN(self.exer_concept_g, self.knowledge_dim, self.knowledge_dim, None)
-
-        self.similarity_gcn3 = GCN(self.similarity_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.prerequisite_gcn3 = GCN(self.prerequisite_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.exer_concept_gcn3 = GCN(self.exer_concept_g, self.knowledge_dim, self.knowledge_dim, None)
-
-        self.similarity_gcn4 = GCN(self.similarity_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.prerequisite_gcn4 = GCN(self.prerequisite_g, self.knowledge_dim, self.knowledge_dim, None)
-        self.exer_concept_gcn4 = GCN(self.exer_concept_g, self.knowledge_dim, self.knowledge_dim, None)
+        self.similarity_gcn = self.create_gcn_layers(self.similarity_g, self.num_layers)
+        self.prerequisite_gcn = self.create_gcn_layers(self.prerequisite_g, self.num_layers)
+        self.exer_concept_gcn = self.create_gcn_layers(self.exer_concept_g, self.num_layers)
 
         self.disc = nn.Linear(self.knowledge_dim, 1)
         self.full_stu = nn.Linear(2*self.knowledge_dim,1)
@@ -59,39 +49,30 @@ class Net(nn.Module):
             if 'weight' in name:
                 nn.init.xavier_normal_(param)
 
+    def create_gcn_layers(self, graph, num_layers):
+        gcn_layers = nn.ModuleList()
+        for _ in range(num_layers):
+            gcn_layers.append(GCN(graph, self.knowledge_dim, self.knowledge_dim, None))
+        return gcn_layers
+
     def forward(self, stu_id, exer_id, kn_emb, input_knowedge_ids, history):
         '''
         :param:
         :return: FloatTensor, the probabilities of answering correctly
         '''
-        # before prednet
-        entity_emb = self.entity(self.entity_index)
 
-        entity_emb_sim = self.similarity_gcn1(entity_emb)
-        entity_emb_pre = self.prerequisite_gcn1(entity_emb)
-        entity_emb_exe_con = self.exer_concept_gcn1(entity_emb)
-        entity_emb1 = entity_emb_sim + entity_emb_pre + entity_emb_exe_con
+        entity_embeddings = [self.entity(self.entity_index)]
+        for similarity_gcn_layer, prerequisite_gcn_layer, exer_concept_gcn_layer in zip(self.similarity_gcn, self.prerequisite_gcn, self.exer_concept_gcn):
+            similarity_embeddings = similarity_gcn_layer(entity_embeddings[-1])
+            prerequisite_embeddings = prerequisite_gcn_layer(entity_embeddings[-1])
+            exer_concept_embeddings = exer_concept_gcn_layer(entity_embeddings[-1])
+            entity_embeddings.append(similarity_embeddings + prerequisite_embeddings + exer_concept_embeddings)
+        full_embeddings = torch.mean(torch.stack(entity_embeddings), dim=0)
+        discarding_embeddings = torch.mean(torch.stack(entity_embeddings[self.discarding_layers+1:]), dim=0)
 
-        entity_emb_sim = self.similarity_gcn2(entity_emb1)
-        entity_emb_pre = self.prerequisite_gcn2(entity_emb1)
-        entity_emb_exe_con = self.exer_concept_gcn2(entity_emb1)
-        entity_emb2 = entity_emb_sim + entity_emb_pre + entity_emb_exe_con
-
-        entity_emb_sim = self.similarity_gcn3(entity_emb2)
-        entity_emb_pre = self.prerequisite_gcn3(entity_emb2)
-        entity_emb_exe_con = self.exer_concept_gcn3(entity_emb2)
-        entity_emb3 = entity_emb_sim + entity_emb_pre + entity_emb_exe_con
-
-        entity_emb_sim = self.similarity_gcn4(entity_emb3)
-        entity_emb_pre = self.prerequisite_gcn4(entity_emb3)
-        entity_emb_exe_con = self.exer_concept_gcn4(entity_emb3)
-        entity_emb4 = entity_emb_sim + entity_emb_pre + entity_emb_exe_con
-
-        stu_entity = (entity_emb3 + entity_emb2)/2
-        exer_entity = (entity_emb + entity_emb1 + entity_emb2 + entity_emb3)/4
-        concept_entity = exer_entity[self.k_index]
-        exer_entity = exer_entity[self.e_index]
-        stu_exe_entity = stu_entity[self.e_index] # bottom discard
+        concept_entity = full_embeddings[self.k_index]
+        exer_entity = full_embeddings[self.e_index]
+        stu_exe_entity = discarding_embeddings[self.e_index] # bottom discard
 
         stu_emb = torch.zeros([stu_id.shape[0], self.knowledge_dim]).to(self.device)
         for s in range(len(history)):
@@ -118,9 +99,6 @@ class Net(nn.Module):
         input_x = torch.sigmoid(self.prednet_full2(input_x))
         output = torch.sigmoid(self.prednet_full3(input_x))
 
-        # print (output)
-        # exit(0)
-
         return output
 
     def apply_clipper(self):
@@ -129,14 +107,6 @@ class Net(nn.Module):
         self.prednet_full2.apply(clipper)
         self.prednet_full3.apply(clipper)
 
-    def get_knowledge_status(self, stu_id):
-        stat_emb = torch.sigmoid(self.student_emb(stu_id))
-        return stat_emb.data
-
-    def get_exer_params(self, exer_id):
-        k_difficulty = torch.sigmoid(self.k_difficulty(exer_id))
-        e_discrimination = torch.sigmoid(self.e_discrimination(exer_id)) * 10
-        return k_difficulty.data, e_discrimination.data
 
 
 class NoneNegClipper(object):
